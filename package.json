@@ -1,0 +1,10 @@
+{
+  "name": "redline-motor",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "REDLINE — sitio de noticias del mundo automotriz, con titulares en tiempo real desde Google Noticias. Gratis.",
+  "engines": {
+    "node": ">=18"
+  }
+}

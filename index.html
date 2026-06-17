@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>REDLINE — Noticias del mundo motor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#e8eae4;          /* salvia-greige suave */
+    --surface:#f7f8f4;      /* tarjeta casi blanca */
+    --surface2:#eff1ec;
+    --ink:#2b2f2c;          /* texto, gris-verdoso profundo */
+    --muted:#6f756f;
+    --faint:#9aa09a;
+    --line:#d7dad1;
+    --line2:#c6cabf;
+    --accent:#5c7b72;       /* eucalipto apagado */
+    --accent-d:#46615a;
+    --accent-soft:#dde6e0;
+    --slate:#5f7385;        /* azul pizarra para Grupo Caminos */
+    --slate-d:#465767;
+    --slate-soft:#dee4ea;
+    --display:"Bricolage Grotesque","Hanken Grotesk",system-ui,sans-serif;
+    --body:"Hanken Grotesk",ui-sans-serif,system-ui,sans-serif;
+    --mono:"Space Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased}
+  body{min-height:100vh;background:
+    radial-gradient(120% 55% at 88% -10%, rgba(92,123,114,.10), transparent 60%),
+    radial-gradient(90% 50% at 0% 0%, rgba(95,115,133,.07), transparent 55%),
+    var(--bg);padding:0 0 64px;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+
+  header.cluster{border-bottom:1px solid var(--line);background:rgba(248,249,245,.78);position:sticky;top:0;z-index:30;backdrop-filter:blur(10px);}
+  .cluster-top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0 14px}
+  .brand{display:flex;align-items:baseline;gap:12px;min-width:0}
+  .mark{font-family:var(--display);font-weight:800;font-size:29px;letter-spacing:-.01em;line-height:.9;text-transform:uppercase;color:var(--ink);position:relative;}
+  .mark::before{content:"";position:absolute;left:-12px;top:1px;bottom:1px;width:4px;background:var(--accent);border-radius:2px}
+  .tagline{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .controls{display:flex;align-items:center;gap:10px}
+  .live{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 rgba(92,123,114,.5);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(92,123,114,.45)}70%{box-shadow:0 0 0 8px rgba(92,123,114,0)}100%{box-shadow:0 0 0 0 rgba(92,123,114,0)}}
+  .clock{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .btn-refresh{display:inline-flex;align-items:center;gap:8px;cursor:pointer;background:var(--accent);color:#fff;border:1px solid var(--accent);font-family:var(--mono);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:9px 14px;border-radius:9px;transition:.15s;}
+  .btn-refresh:hover{background:var(--accent-d);border-color:var(--accent-d)}
+  .btn-refresh:focus-visible{outline:2px solid var(--accent-d);outline-offset:2px}
+  .btn-refresh.spin svg{animation:rev 1s linear infinite}
+  @keyframes rev{to{transform:rotate(360deg)}}
+  .revbar{height:3px;background:var(--surface2);position:relative;overflow:hidden}
+  .revbar::after{content:"";position:absolute;inset:0;width:35%;background:linear-gradient(90deg,transparent,var(--accent),var(--slate),transparent);transform:translateX(-120%);}
+  .revbar.run::after{animation:sweep 1.1s cubic-bezier(.5,0,.4,1) infinite}
+  @keyframes sweep{0%{transform:translateX(-120%)}100%{transform:translateX(320%)}}
+
+  .panel{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:22px 0 6px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{cursor:pointer;font-family:var(--body);font-weight:600;font-size:14px;letter-spacing:.01em;color:var(--muted);background:var(--surface);border:1px solid var(--line2);padding:7px 14px;border-radius:999px;transition:.15s;}
+  .chip:hover{color:var(--ink);border-color:var(--faint)}
+  .chip[aria-pressed="true"]{color:#fff;background:var(--accent);border-color:var(--accent);box-shadow:0 4px 16px rgba(92,123,114,.22)}
+  .chip:focus-visible{outline:2px solid var(--accent-d);outline-offset:2px}
+  .chip.special{color:var(--slate);border-color:var(--slate);font-weight:700}
+  .chip.special[aria-pressed="true"]{background:var(--slate);border-color:var(--slate);color:#fff;box-shadow:0 4px 16px rgba(95,115,133,.24)}
+  .search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line2);border-radius:10px;padding:6px 6px 6px 12px;min-width:min(320px,100%)}
+  .search svg{flex:0 0 auto;color:var(--faint)}
+  .search input{flex:1;background:transparent;border:none;color:var(--ink);font-family:var(--mono);font-size:13px;outline:none;min-width:0}
+  .search input::placeholder{color:var(--faint)}
+  .search button{cursor:pointer;background:var(--surface2);color:var(--ink);border:1px solid var(--line2);border-radius:7px;padding:7px 12px;font-family:var(--mono);font-size:12px;font-weight:700;transition:.15s}
+  .search button:hover{border-color:var(--accent);color:var(--accent-d)}
+  .search button:focus-visible{outline:2px solid var(--accent-d);outline-offset:2px}
+
+  /* Apartado especial Grupo Caminos */
+  .brandrow{display:none;align-items:center;flex-wrap:wrap;gap:8px;background:var(--slate-soft);border:1px solid #cdd6dd;border-radius:12px;padding:12px 14px;margin-top:14px}
+  .rowlabel{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--slate-d);display:inline-flex;align-items:center;gap:7px;margin-right:6px;font-weight:700}
+  .rowlabel::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--slate)}
+  .bchip{cursor:pointer;font-family:var(--body);font-weight:600;font-size:13px;color:var(--slate-d);background:#fff;border:1px solid #cdd6dd;padding:5px 12px;border-radius:999px;transition:.15s}
+  .bchip:hover{border-color:var(--slate)}
+  .bchip[aria-pressed="true"]{background:var(--slate);color:#fff;border-color:var(--slate)}
+  .bchip:focus-visible{outline:2px solid var(--slate-d);outline-offset:2px}
+
+  .statusline{font-family:var(--mono);font-size:12px;color:var(--muted);padding:16px 2px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .statusline .tick{color:var(--accent)}
+
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  .card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 22px 18px 26px;display:flex;flex-direction:column;gap:14px;transition:.18s;overflow:hidden;min-height:156px;box-shadow:0 1px 2px rgba(43,47,44,.04)}
+  .card::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:3px;background:linear-gradient(180deg,var(--accent),var(--accent-d));opacity:.85}
+  .card:hover{border-color:var(--line2);transform:translateY(-2px);box-shadow:0 12px 30px rgba(43,47,44,.10)}
+  .card.featured{grid-column:1 / -1;padding:30px 30px 26px 34px;background:linear-gradient(135deg,var(--accent-soft),var(--surface) 55%)}
+  .grid.caminos .card::before{background:linear-gradient(180deg,var(--slate),var(--slate-d))}
+  .grid.caminos .card.featured{background:linear-gradient(135deg,var(--slate-soft),var(--surface) 55%)}
+  .grid.caminos .tag{color:var(--slate-d);background:var(--slate-soft);border-color:#cdd6dd}
+  .grid.caminos .statusline .tick{color:var(--slate)}
+  .meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .tag{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent-d);background:var(--accent-soft);border:1px solid #c8d6cf;padding:3px 9px;border-radius:5px}
+  .when{font-family:var(--mono);font-size:11px;color:var(--faint)}
+  .headline{font-family:var(--display);font-weight:700;line-height:1.08;letter-spacing:-.01em;font-size:24px;flex:1}
+  .card.featured .headline{font-size:clamp(27px,4.2vw,40px);line-height:1.04}
+  .foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:14px;border-top:1px solid var(--line);margin-top:auto}
+  .source{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .read{display:inline-flex;align-items:center;gap:6px;font-family:var(--display);font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.02em;color:var(--ink);text-decoration:none;white-space:nowrap;transition:.15s}
+  .read:hover{color:var(--accent-d)}
+  .read svg{transition:transform .15s}
+  .read:hover svg{transform:translateX(3px)}
+  .sk{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;overflow:hidden;position:relative;min-height:156px}
+  .sk .bar{height:12px;border-radius:6px;background:var(--surface2);margin:10px 0}
+  .sk::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(43,47,44,.05),transparent);animation:shimmer 1.4s infinite}
+  @keyframes shimmer{100%{transform:translateX(100%)}}
+  .state{text-align:center;padding:60px 20px;color:var(--muted)}
+  .state h3{font-family:var(--display);font-weight:700;font-size:26px;color:var(--ink);letter-spacing:-.01em;margin-bottom:8px}
+  .state p{max-width:52ch;margin:0 auto 18px;line-height:1.5}
+  .state button{cursor:pointer;background:var(--accent);color:#fff;border:none;font-family:var(--mono);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.05em;padding:11px 20px;border-radius:9px}
+  .state button:hover{background:var(--accent-d)}
+  footer.fine{text-align:center;font-family:var(--mono);font-size:11px;color:var(--faint);padding-top:36px;line-height:1.7}
+  @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="cluster">
+  <div class="wrap">
+    <div class="cluster-top">
+      <div class="brand">
+        <div class="mark">Redline</div>
+        <div class="tagline">Mundo motor · Colombia · Latinoamérica · el mundo</div>
+      </div>
+      <div class="controls">
+        <span class="live"><span class="dot"></span>En vivo</span>
+        <span class="clock" id="clock">--:--</span>
+        <button class="btn-refresh" id="refresh" aria-label="Actualizar noticias">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+          Actualizar
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="revbar" id="revbar"></div>
+</header>
+
+<div class="wrap">
+  <div class="panel">
+    <div class="chips" id="chips" role="group" aria-label="Categorías"></div>
+    <div class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="q" placeholder="Buscar… Chevrolet, aranceles, TRM, Subaru" autocomplete="off">
+      <button id="go">Buscar</button>
+    </div>
+  </div>
+
+  <div class="brandrow" id="brandrow" role="group" aria-label="Marcas de Grupo Caminos">
+    <span class="rowlabel">Grupo Caminos · Marcas</span>
+  </div>
+
+  <div class="statusline" id="status"></div>
+  <div id="content"></div>
+
+  <footer class="fine">
+    REDLINE reúne titulares de Google Noticias en tiempo real (Colombia, Latinoamérica y el mundo).<br>
+    Cada nota se abre en su medio original. Sección Grupo Caminos enfocada en sus marcas.
+  </footer>
+</div>
+
+<script>
+const CATS = [
+  { id:"todo",     label:"Todo",         q:"autos carros noticias automotriz industria" },
+  { id:"economia", label:"Economía",     q:"industria automotriz economía mercado de vehículos dólar TRM tasa de cambio combustibles ventas inflación" },
+  { id:"aduanas",  label:"Aduanas",      q:"aduanas importación de vehículos aranceles automotriz nacionalización tratado comercial" },
+  { id:"ev",       label:"Eléctricos",   q:"carros eléctricos vehículo eléctrico batería autonomía cargadores" },
+  { id:"launch",   label:"Lanzamientos", q:"lanzamiento carro nuevo modelo estreno automotriz" },
+  { id:"sport",    label:"Competición",  q:"Fórmula 1 automovilismo rally WRC resistencia" },
+  { id:"tech",     label:"Tecnología",   q:"tecnología automotriz conducción autónoma software del carro innovación" },
+  { id:"review",   label:"Reseñas",      q:"prueba de manejo reseña carro análisis" },
+  { id:"usados",   label:"Usados",       q:"precios carros usados mercado de usados vehículos seminuevos" },
+  { id:"caminos",  label:"Grupo Caminos", special:true },
+];
+
+const CAMINOS_ALL = "(Subaru OR GWM OR Chevrolet OR Citroën OR Suzuki OR Chery OR Dongfeng OR Hino OR JAC OR DFSK) carro Colombia";
+const BRANDS = [
+  { id:"todas",     label:"Todas",     q: CAMINOS_ALL },
+  { id:"subaru",    label:"Subaru",    q:"Subaru carro novedades" },
+  { id:"gwm",       label:"GWM",       q:"GWM Great Wall Motors carro" },
+  { id:"chevrolet", label:"Chevrolet", q:"Chevrolet carro novedades Colombia" },
+  { id:"citroen",   label:"Citroën",   q:"Citroën carro novedades" },
+  { id:"suzuki",    label:"Suzuki",    q:"Suzuki carro novedades" },
+  { id:"chery",     label:"Chery",     q:"Chery carro novedades" },
+  { id:"dongfeng",  label:"Dongfeng",  q:"Dongfeng carro vehículo" },
+  { id:"hino",      label:"Hino",      q:"Hino camión vehículo Colombia" },
+  { id:"jac",       label:"JAC",       q:"JAC Motors carro vehículo" },
+  { id:"dfsk",      label:"DFSK",      q:"DFSK carro vehículo" },
+];
+
+let activeCat = "todo";
+let activeBrand = "todas";
+let currentLabel = "Todo";
+let caminosMode = false;
+let lastQuery = null;
+
+const $ = s => document.querySelector(s);
+const content = $("#content"), statusEl = $("#status"), revbar = $("#revbar"), refreshBtn = $("#refresh"), brandRow = $("#brandrow");
+
+function tick(){ $("#clock").textContent = new Date().toLocaleTimeString("es",{hour:"2-digit",minute:"2-digit"}); }
+tick(); setInterval(tick,30000);
+
+// Categorías principales
+const chipsEl = $("#chips");
+CATS.forEach(c=>{
+  const b=document.createElement("button");
+  b.className="chip"+(c.special?" special":""); b.textContent=c.label; b.dataset.id=c.id;
+  b.setAttribute("aria-pressed", c.id===activeCat);
+  b.onclick=()=>selectCat(c.id);
+  chipsEl.appendChild(b);
+});
+function syncChips(){ [...chipsEl.children].forEach(b=>b.setAttribute("aria-pressed", b.dataset.id===activeCat)); }
+
+// Marcas de Grupo Caminos
+BRANDS.forEach(br=>{
+  const b=document.createElement("button");
+  b.className="bchip"; b.textContent=br.label; b.dataset.id=br.id;
+  b.setAttribute("aria-pressed", br.id===activeBrand);
+  b.onclick=()=>{ activeBrand=br.id; syncBrands(); load(); };
+  brandRow.appendChild(b);
+});
+function syncBrands(){ [...brandRow.querySelectorAll(".bchip")].forEach(b=>b.setAttribute("aria-pressed", b.dataset.id===activeBrand)); }
+
+function selectCat(id){
+  activeCat=id; $("#q").value="";
+  const isC = id==="caminos";
+  brandRow.style.display = isC ? "flex" : "none";
+  syncChips();
+  if(isC){ activeBrand="todas"; syncBrands(); }
+  load();
+}
+
+$("#go").onclick = ()=>{ const v=$("#q").value.trim(); if(v) load(v); };
+$("#q").addEventListener("keydown", e=>{ if(e.key==="Enter"){ const v=e.target.value.trim(); if(v) load(v); } });
+refreshBtn.onclick = ()=> load(lastQuery);
+
+function setLoading(on){ revbar.classList.toggle("run", on); refreshBtn.classList.toggle("spin", on); }
+function skeletons(){ let h='<div class="grid'+(caminosMode?' caminos':'')+'">'; for(let i=0;i<6;i++){ h+='<div class="sk"><div class="bar" style="width:30%"></div><div class="bar" style="width:90%;height:18px"></div><div class="bar" style="width:75%"></div><div class="bar" style="width:55%;margin-top:24px"></div></div>'; } return h+'</div>'; }
+function esc(t){ return (t||"").replace(/[&<>"]/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m])); }
+function reload(){ load(lastQuery); }
+
+function render(items){
+  if(!items || !items.length){
+    content.innerHTML='<div class="state"><h3>Sin titulares por ahora</h3><p>No encontramos noticias para esto en este momento. Prueba otra categoría, otra marca o un término distinto.</p><button onclick="reload()">Reintentar</button></div>';
+    statusEl.innerHTML='<span class="tick">●</span> 0 noticias'; return;
+  }
+  let h='<div class="grid'+(caminosMode?' caminos':'')+'">';
+  items.forEach((it,i)=>{
+    const feat=i===0?" featured":"";
+    const url=(it.url||"").startsWith("http")?it.url:"";
+    const link=url?`<a class="read" href="${esc(url)}" target="_blank" rel="noopener">Leer <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>`:"";
+    h+=`<article class="card${feat}"><div class="meta"><span class="tag">${esc(currentLabel)}</span><span class="when">${esc(it.fecha||"Reciente")}</span></div><h2 class="headline">${esc(it.titulo||"Sin título")}</h2><div class="foot"><span class="source">${esc(it.fuente||"Fuente")}</span>${link}</div></article>`;
+  });
+  content.innerHTML=h+"</div>";
+  const now=new Date().toLocaleTimeString("es",{hour:"2-digit",minute:"2-digit"});
+  statusEl.innerHTML=`<span class="tick">●</span> ${items.length} titulares · actualizado a las ${now}`;
+}
+function showError(msg){
+  content.innerHTML='<div class="state"><h3>Se cortó la señal</h3><p>'+esc(msg)+'</p><button onclick="reload()">Reintentar</button></div>';
+  statusEl.innerHTML='<span class="tick" style="color:#b5563f">●</span> Error';
+}
+
+async function load(customQuery){
+  setLoading(true);
+  let topic;
+  if(customQuery){ topic=customQuery; currentLabel="Búsqueda"; caminosMode=false; }
+  else if(activeCat==="caminos"){ const br=BRANDS.find(b=>b.id===activeBrand)||BRANDS[0]; topic=br.q; currentLabel=(br.id==="todas")?"Grupo Caminos":br.label; caminosMode=true; }
+  else { const c=CATS.find(x=>x.id===activeCat); topic=c.q; currentLabel=c.label; caminosMode=false; }
+  lastQuery = customQuery || null;
+
+  content.innerHTML=skeletons();
+  statusEl.innerHTML='<span class="tick">●</span> Sintonizando titulares…';
+  try{
+    const res=await fetch("/api/news",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({topic}) });
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok){ throw new Error(data.error||("Error "+res.status)); }
+    render(data.items||[]);
+  }catch(err){
+    console.error(err);
+    showError(String(err.message||err));
+  }finally{ setLoading(false); }
+}
+load();
+</script>
+</body>
+</html>
