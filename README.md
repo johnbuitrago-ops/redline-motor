@@ -1,7 +1,7 @@
 # REDLINE — Cómo publicarlo en internet (versión GRATIS)
 
 App de noticias del mundo motor lista para publicar como sitio web.
-Reúne titulares en tiempo real desde **Google Noticias** — sin clave de API y **sin pagar nada**.
+Reúne titulares en tiempo real desde **Google Noticias** —   sin clave de API y **sin pagar nada**.
 
 Usarás dos servicios gratuitos: **GitHub** (para guardar los archivos) y
 **Vercel** (para publicar la web). No necesitas saber programar ni usar la terminal.
